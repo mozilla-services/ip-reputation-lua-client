@@ -1,5 +1,5 @@
 # ip-reputation-lua-client
-Lua client library for the IP Reputation Service / tigerblood
+Lua client library for the [IP Reputation Service / tigerblood](https://github.com/mozilla-services/tigerblood)
 
 ## TODO
 
