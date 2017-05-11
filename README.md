@@ -5,5 +5,4 @@ Lua client library for the [IP Reputation Service / tigerblood](https://github.c
 
 - [ ] hindsight / lua sandbox support
 - [ ] openresty support
-- [ ] lua / luarocks
-- [ ] hawk signing
+- [ ] publish luarock
