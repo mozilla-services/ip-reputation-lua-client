@@ -141,6 +141,43 @@ describe("ip-reputation client module", function()
     local resp = rep.get('127.0.0.1')
     assert.Equal(200, resp.status_code)
     assert.Equal('{"IP":"127.0.0.1","Reputation":70}', resp.body)
+
+    -- teardown
+    local resp = rep.remove('127.0.0.1')
+    assert.Equal(200, resp.status_code)
+  end)
+
+  it("should send multiple violations", function()
+    local rep = require("ip-reputation")
+
+    rep.configure({
+      base_url = "http://localhost:8080",
+      id = "root",
+      key = "toor",
+    })
+
+    local resp = rep.get('127.0.0.1')
+    assert.Equal(404, resp.status_code)
+
+    local resp = rep.send_violations({
+	  {ip='127.0.0.1', violation='test_violation', weight = 10},
+	  {ip='127.0.0.2', violation='test_violation', weight = 20},
+	  {ip='127.0.0.3', violation='test_violation', weight = 30},
+    })
+    -- assert.Equal('{"IP":"127.0.0.1","Reputation":70}', resp.body)
+    assert.Equal(204, resp.status_code)
+
+    local resp = rep.get('127.0.0.1')
+    assert.Equal(200, resp.status_code)
+    assert.Equal('{"IP":"127.0.0.1","Reputation":70}', resp.body)
+
+    local resp = rep.get('127.0.0.2')
+    assert.Equal(200, resp.status_code)
+    assert.Equal('{"IP":"127.0.0.2","Reputation":70}', resp.body)
+
+    local resp = rep.get('127.0.0.3')
+    assert.Equal(200, resp.status_code)
+    assert.Equal('{"IP":"127.0.0.3","Reputation":70}', resp.body)
   end)
 
   it("should clean up inserted reputation from send violation test", function()
@@ -153,6 +190,10 @@ describe("ip-reputation client module", function()
     })
 
     local resp = rep.remove('127.0.0.1')
+    assert.Equal(200, resp.status_code)
+    local resp = rep.remove('127.0.0.2')
+    assert.Equal(200, resp.status_code)
+    local resp = rep.remove('127.0.0.3')
     assert.Equal(200, resp.status_code)
   end)
 

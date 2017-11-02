@@ -121,6 +121,14 @@ function send_violation(ip, violation_type)
    return json_request('PUT', '/violations/' .. ip, {ip = ip, violation = violation_type})
 end
 
+-- records multiple for multiple IP, violation pairs
+-- example body param: [{ip = "127.0.0.1", violation = "fxa:heavy-hitter", weight = 30} ...]
+-- Note: IPs must be unique
+function send_violations(body)
+   return json_request('PUT', '/violations/', body)
+end
+
+
 return {
    configure = configure,
    get = get,
@@ -128,5 +136,6 @@ return {
    update = update,
    remove = remove,
    send_violation = send_violation,
+   send_violations = send_violations,
    hawk = hawk,
 }
