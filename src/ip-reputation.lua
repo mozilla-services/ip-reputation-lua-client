@@ -2,11 +2,16 @@
 -- License, v. 2.0. If a copy of the MPL was not distributed with this
 -- file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+
+local pkg = {}
+ip_reputation_client = pkg
+
 local http = require('socket.http')
 local url = require('socket.url')
 local ltn12 = require('ltn12')
 local cjson = require('cjson')
 local hawk = require('hawk')
+pkg.hawk = hawk
 
 local config = { -- config params set via configure
    base_url = nil,
@@ -42,7 +47,7 @@ end
 --    key = "toor", -- hawk key
 -- })
 --
-function configure(new_config)
+function pkg.configure(new_config)
    config['base_url'] = new_config['base_url'];
    config['id'] = new_config['id'];
    config['key'] = new_config['key'];
@@ -97,45 +102,36 @@ function json_request(method, uri, body)
 end
 
 -- gets reputation for an IP
-function get(ip)
+function pkg.get(ip)
   return json_request('GET', '/' .. ip)
 end
 
 -- records reputation for an IP
-function add(ip, reputation)
+function pkg.add(ip, reputation)
   return json_request('POST', '/', {ip = ip, reputation = reputation})
 end
 
 -- updates an IP's reputation
-function update(ip, reputation)
+function pkg.update(ip, reputation)
    return json_request('PUT', '/' .. ip, {reputation = reputation})
 end
 
 -- removes an IP's reputation
-function remove(ip)
+function pkg.remove(ip)
   return json_request('DELETE', '/' .. ip)
 end
 
 -- records a violation from an IP
-function send_violation(ip, violation_type)
+function pkg.send_violation(ip, violation_type)
    return json_request('PUT', '/violations/' .. ip, {ip = ip, violation = violation_type})
 end
 
 -- records multiple for multiple IP, violation pairs
 -- example body param: [{ip = "127.0.0.1", violation = "fxa:heavy-hitter", weight = 30} ...]
 -- Note: IPs must be unique
-function send_violations(body)
+function pkg.send_violations(body)
    return json_request('PUT', '/violations/', body)
 end
 
 
-return {
-   configure = configure,
-   get = get,
-   add = add,
-   update = update,
-   remove = remove,
-   send_violation = send_violation,
-   send_violations = send_violations,
-   hawk = hawk,
-}
+return pkg
