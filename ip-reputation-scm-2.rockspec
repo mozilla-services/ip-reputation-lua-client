@@ -1,5 +1,5 @@
 package = "ip-reputation"
-version = "scm-1"
+version = "scm-2"
 
 description = {
 	summary = "IP Reputation client library for Lua";
